@@ -1,0 +1,23 @@
+{
+  "Version": "v1",
+  "MappingFields": [
+    {
+      "Name": "EmailAddress",
+      "Description": "",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Delete"
+          ],
+          "MappingMode": "Field",
+          "Value": "\"function getActiveDirectoryEmail(){\\n  return Person.Accounts.MicrosoftActiveDirectory.mail\\n}\\ngetActiveDirectoryEmail();\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": false
+        }
+      ]
+    }
+  ],
+  "UniqueFieldNames": []
+}
