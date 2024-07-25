@@ -14,15 +14,15 @@ try {
         Write-Information 'Correlating GoodHabitz account'
 
         $outputContext.AccountReference = $actionContext.Data.EmailAddress
-        $outputContext.AccountCorrelated = $true
         $outputContext.success = $true
         $outputContext.AuditLogs.Add([PSCustomObject]@{
                 Action  = 'CorrelateAccount'
-                Message = "Correlated account on field: [EmailAddress] with value: [$($actionContext.Data.EmailAddress)]"
+                Message = "Account [$($actionContext.Data.EmailAddress)] successfully correlated on field [EmailAddress]"
                 IsError = $false
             })
     }
-} catch {
+}
+catch {
     $outputContext.success = $false
     Write-Warning "Error at Line '$($_.InvocationInfo.ScriptLineNumber)': $($_.InvocationInfo.Line). Error: $($_.Exception.Message)"
     $outputContext.AuditLogs.Add([PSCustomObject]@{

@@ -14,7 +14,7 @@
           "MappingMode": "Field",
           "Value": "\"function getActiveDirectoryEmail(){\\n  return Person.Accounts.MicrosoftActiveDirectory.mail\\n}\\ngetActiveDirectoryEmail();\"",
           "UsedInNotifications": false,
-          "StoreInAccountData": false
+          "StoreInAccountData": true
         }
       ]
     }

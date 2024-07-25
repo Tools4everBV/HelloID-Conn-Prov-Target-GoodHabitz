@@ -4,8 +4,8 @@
     "type": "input",
     "defaultValue": "",
     "templateOptions": {
-      "type": "password",
       "label": "Password",
+      "type": "password",
       "description": "The ApiKey to connect to the API",
       "required": true
     }
@@ -13,7 +13,7 @@
   {
     "key": "BaseUrl",
     "type": "input",
-    "defaultValue": "",
+    "defaultValue": "https://myengine.goodhabitz.com",
     "templateOptions": {
       "label": "BaseUrl",
       "description": "The URL to the API.",

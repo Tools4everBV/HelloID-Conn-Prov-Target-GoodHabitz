@@ -5,7 +5,7 @@
 > This repository contains the connector and configuration code only. The implementer is responsible to acquire the connection details such as username, password, certificate, etc. You might even need to sign a contract or agreement with the supplier before implementing this connector. Please contact the client's application manager to coordinate the connector requirements.
 
 <p align="center">
-  <img src="">
+  <img src="https://github.com/Tools4everBV/HelloID-Conn-Prov-Target-GoodHabitz/blob/main/Logo.png?raw=true">
 </p>
 
 ## Table of contents
@@ -24,18 +24,18 @@
 
 _HelloID-Conn-Prov-Target-GoodHabitz_ is a _target_ connector. _GoodHabitz_ The purpose of this connector is to only delete a person from GoodHabitz using the persons Active Directory email address.
 
-| Endpoint | Description |
-| -------- | ----------- |
-| /person/forget | Endpoint for removing accounts from GoodHabitz.  |
+| Endpoint       | Description                                     |
+| -------------- | ----------------------------------------------- |
+| /person/forget | Endpoint for removing accounts from GoodHabitz. |
 
 The following lifecycle actions are available:
 
-| Action                 | Description                                      |
-| ---------------------- | ------------------------------------------------ |
-| create.ps1             | PowerShell _create_ lifecycle action             |
-| delete.ps1             | PowerShell _delete_ lifecycle action             |
-| configuration.json     | Default _configuration.json_ |
-| fieldMapping.json      | Default _fieldMapping.json_   |
+| Action             | Description                          |
+| ------------------ | ------------------------------------ |
+| create.ps1         | PowerShell _create_ lifecycle action |
+| delete.ps1         | PowerShell _delete_ lifecycle action |
+| configuration.json | Default _configuration.json_         |
+| fieldMapping.json  | Default _fieldMapping.json_          |
 
 The field mapping can be imported by using the _fieldMapping.json_ file.
 
@@ -43,10 +43,10 @@ The field mapping can be imported by using the _fieldMapping.json_ file.
 
 The following settings are required to connect to the API.
 
-| Setting  | Description                        | Mandatory |
-| -------- | ---------------------------------- | --------- |
-| ApiKey | The ApiKey to connect to the API | Yes       |
-| BaseUrl  | The URL to the API                 | Yes       |
+| Setting | Description                      | Mandatory |
+| ------- | -------------------------------- | --------- |
+| ApiKey  | The ApiKey to connect to the API | Yes       |
+| BaseUrl | The URL to the API               | Yes       |
 
 ### Remarks
 
@@ -57,6 +57,9 @@ Within the _create_ lifecycle action, the `$outputContext.AccountReference` is s
 #### Delete only
 
 The purpose of this connector is to __only__ remove an account from GoodHabitz.
+
+> [!IMPORTANT]
+> The account will be marked for deletion in Good Habitz. Good Habitz has an internal retention time before the account is deleted. By default, this time is 5 days.
 
 ## Getting help
 
