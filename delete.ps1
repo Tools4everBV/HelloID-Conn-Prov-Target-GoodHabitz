@@ -23,7 +23,8 @@ function Resolve-GoodHabitzError {
         }
         if (-not [string]::IsNullOrEmpty($ErrorObject.ErrorDetails.Message)) {
             $httpErrorObj.ErrorDetails = $ErrorObject.ErrorDetails.Message
-        } elseif ($ErrorObject.Exception.GetType().FullName -eq 'System.Net.WebException') {
+        }
+        elseif ($ErrorObject.Exception.GetType().FullName -eq 'System.Net.WebException') {
             if ($null -ne $ErrorObject.Exception.Response) {
                 $streamReaderResponse = [System.IO.StreamReader]::new($ErrorObject.Exception.Response.GetResponseStream()).ReadToEnd()
                 if (-not [string]::IsNullOrEmpty($streamReaderResponse)) {
@@ -31,14 +32,7 @@ function Resolve-GoodHabitzError {
                 }
             }
         }
-        try {
-            $errorDetailsObject = ($httpErrorObj.ErrorDetails | ConvertFrom-Json)
-            # Make sure to inspect the error result object and add only the error message as a FriendlyMessage.
-            # $httpErrorObj.FriendlyMessage = $errorDetailsObject.message
-            $httpErrorObj.FriendlyMessage = $httpErrorObj.ErrorDetails # Temporarily assignment
-        } catch {
-            $httpErrorObj.FriendlyMessage = $httpErrorObj.ErrorDetails
-        }
+        $httpErrorObj.FriendlyMessage = $httpErrorObj.ErrorDetails
         Write-Output $httpErrorObj
     }
 }
@@ -57,22 +51,39 @@ try {
     # Process
     if (-not($actionContext.DryRun -eq $true)) {
         Write-Information "Deleting GoodHabitz account with accountReference: [$($actionContext.Data.EmailAddress)]"
+
         $splatParams = @{
-            Uri         = "$($actionContext.Configuration.BaseUrl)api/person/forget?email=$($actionContext.Data.EmailAddress)"
+            Uri         = "$($actionContext.Configuration.BaseUrl)/api/person/forget?email=$($actionContext.Data.EmailAddress)"
             Method      = 'POST'
             ContentType = 'application/x-www-form-urlencoded'
-            Headers = @{
+            Headers     = @{
                 Authorization = "Bearer $($ActionContext.Configuration.ApiKey)"
             }
         }
-        $null =  Invoke-RestMethod @splatParams
-        $outputContext.Success = $true
-        $outputContext.AuditLogs.Add([PSCustomObject]@{
-            Message = 'Delete account was successful'
-            IsError = $false
-        })
+
+        try {
+            $null = Invoke-RestMethod @splatParams
+
+            $outputContext.AuditLogs.Add([PSCustomObject]@{
+                    Message = "Account [$($actionContext.Data.EmailAddress)] was successfully deleted"
+                    IsError = $false
+                })
+        } 
+        catch {
+            if ($_.Exception.Response.StatusCode -eq 404) {
+                $outputContext.AuditLogs.Add([PSCustomObject]@{
+                        Message = "Account [$($actionContext.Data.EmailAddress)] was not found, action skiped"
+                        IsError = $false
+                    })
+            }
+            else {
+                throw
+            }
+        }
     }
-} catch {
+    $outputContext.success = $true
+}
+catch {
     $outputContext.success = $false
     $ex = $PSItem
     if ($($ex.Exception.GetType().FullName -eq 'Microsoft.PowerShell.Commands.HttpResponseException') -or
@@ -80,12 +91,13 @@ try {
         $errorObj = Resolve-GoodHabitzError -ErrorObject $ex
         $auditMessage = "Could not delete GoodHabitz account. Error: $($errorObj.FriendlyMessage)"
         Write-Warning "Error at Line '$($errorObj.ScriptLineNumber)': $($errorObj.Line). Error: $($errorObj.ErrorDetails)"
-    } else {
+    }
+    else {
         $auditMessage = "Could not delete GoodHabitz account. Error: $($_.Exception.Message)"
         Write-Warning "Error at Line '$($ex.InvocationInfo.ScriptLineNumber)': $($ex.InvocationInfo.Line). Error: $($ex.Exception.Message)"
     }
     $outputContext.AuditLogs.Add([PSCustomObject]@{
-        Message = $auditMessage
-        IsError = $true
-    })
+            Message = $auditMessage
+            IsError = $true
+        })
 }
