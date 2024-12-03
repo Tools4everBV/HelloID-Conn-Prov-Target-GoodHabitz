@@ -33,6 +33,7 @@ The following lifecycle actions are available:
 | Action             | Description                          |
 | ------------------ | ------------------------------------ |
 | create.ps1         | PowerShell _create_ lifecycle action |
+| update.ps1         | PowerShell _update_ lifecycle action |
 | delete.ps1         | PowerShell _delete_ lifecycle action |
 | configuration.json | Default _configuration.json_         |
 | fieldMapping.json  | Default _fieldMapping.json_          |
@@ -52,7 +53,7 @@ The following settings are required to connect to the API.
 
 #### Correlation not being used
 
-Within the _create_ lifecycle action, the `$outputContext.AccountReference` is set to: `$actionContext.Data.EmailAddress`. However, the account reference is not being used within the _delete_ lifecycle action since the account reference is not being updated.
+Within the _create_ and _update_ lifecycle action, the `$outputContext.AccountReference` is set to: `$actionContext.Data.EmailAddress` when not empty. The `$actionContext.References.Account` is used when `$actionContext.Data.EmailAddress` is empty in the _delete_ lifecycle action.
 
 #### Delete only
 

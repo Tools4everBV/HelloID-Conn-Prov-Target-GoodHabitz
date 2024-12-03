@@ -44,16 +44,22 @@ try {
         throw 'The account reference could not be found'
     }
 
+    if ([string]::IsNullOrEmpty($actionContext.Data.EmailAddress)) {
+        $emailAddress = $actionContext.References.Account
+    } else {
+        $emailAddress = $actionContext.Data.EmailAddress
+    }
+
     if ($actionContext.DryRun -eq $true) {
-        Write-Information "[DryRun] Delete GoodHabitz account: [$($actionContext.References.Account)] for person: [$($personContext.Person.DisplayName)] will be executed during enforcement"
+        Write-Information "[DryRun] Delete GoodHabitz account: [$emailAddress] for person: [$($personContext.Person.DisplayName)] will be executed during enforcement"
     }
 
     # Process
     if (-not($actionContext.DryRun -eq $true)) {
-        Write-Information "Deleting GoodHabitz account with accountReference: [$($actionContext.Data.EmailAddress)]"
+        Write-Information "Deleting GoodHabitz account with accountReference: [$emailAddress]"
 
         $splatParams = @{
-            Uri         = "$($actionContext.Configuration.BaseUrl)/api/person/forget?email=$($actionContext.Data.EmailAddress)"
+            Uri         = "$($actionContext.Configuration.BaseUrl)/api/person/forget?email=$emailAddress"
             Method      = 'POST'
             ContentType = 'application/x-www-form-urlencoded'
             Headers     = @{
@@ -65,14 +71,14 @@ try {
             $null = Invoke-RestMethod @splatParams
 
             $outputContext.AuditLogs.Add([PSCustomObject]@{
-                    Message = "Account [$($actionContext.Data.EmailAddress)] was successfully deleted"
+                    Message = "Account [$emailAddress] was successfully deleted"
                     IsError = $false
                 })
         } 
         catch {
             if ($_.Exception.Response.StatusCode -eq 404) {
                 $outputContext.AuditLogs.Add([PSCustomObject]@{
-                        Message = "Account [$($actionContext.Data.EmailAddress)] was not found, action skiped"
+                        Message = "Account [$emailAddress] was not found, action skiped"
                         IsError = $false
                     })
             }

@@ -11,8 +11,8 @@
             "Create",
             "Delete"
           ],
-          "MappingMode": "Field",
-          "Value": "\"function getActiveDirectoryEmail(){\\n  return Person.Accounts.MicrosoftActiveDirectory.mail\\n}\\ngetActiveDirectoryEmail();\"",
+          "MappingMode": "Complex",
+          "Value": "\"function getEmail() {\\r\\n    let mail = '';\\r\\n    if (typeof Person.ExternalId !== 'undefined' && Person.ExternalId) {\\r\\n        if (typeof Person.Accounts.MicrosoftActiveDirectory.mail !== 'undefined' && Person.Accounts.MicrosoftActiveDirectory.mail) {\\r\\n            mail = Person.Accounts.MicrosoftActiveDirectory.mail;\\r\\n        }\\r\\n    }\\r\\n    return mail;\\r\\n}\\r\\n\\r\\ngetEmail()\"",
           "UsedInNotifications": false,
           "StoreInAccountData": true
         }
