@@ -4,30 +4,26 @@
 ############################################
 
 try {
-    if ($actionContext.DryRun -eq $true) {
-        Write-Information "[DryRun] correlate GoodHabitz account for: [$($personContext.Person.DisplayName)], will be executed during enforcement"
-        if (-not([string]::IsNullOrEmpty($actionContext.Data.EmailAddress))) {
+    if (-not([string]::IsNullOrEmpty($actionContext.Data.EmailAddress))) {
+        if ($actionContext.References.Account -ne $actionContext.Data.EmailAddress) {
             $outputContext.AccountReference = $actionContext.Data.EmailAddress
+            $outputContext.PreviousData.EmailAddress = $actionContext.References.Account
+            $outputContext.Success = $true
+            $outputContext.AuditLogs.Add([PSCustomObject]@{
+                    Message = "AccountReference [$($actionContext.Data.EmailAddress)] successfully updated on field [EmailAddress]"
+                    IsError = $false
+                })
         }
-        $outputContext.success = $true
-    }
-
-    if (-not($actionContext.DryRun -eq $true)) {
-        Write-Information 'Correlating GoodHabitz account'
-
-        if (-not([string]::IsNullOrEmpty($actionContext.Data.EmailAddress))) {
-            $outputContext.AccountReference = $actionContext.Data.EmailAddress
+        else {
+            Write-Information 'NoChanges needed for AccountReference'
+            $outputContext.Success = $true
         }
-        $outputContext.success = $true
-        $outputContext.AuditLogs.Add([PSCustomObject]@{
-                Action  = 'CorrelateAccount'
-                Message = "Account [$($actionContext.Data.EmailAddress)] successfully correlated on field [EmailAddress]"
-                IsError = $false
-            })
+    } else {
+        throw "Mapping EmailAddress is empty this is likely a mapping error"
     }
 }
 catch {
-    $outputContext.success = $false
+    $outputContext.Success = $false
     Write-Warning "Error at Line '$($_.InvocationInfo.ScriptLineNumber)': $($_.InvocationInfo.Line). Error: $($_.Exception.Message)"
     $outputContext.AuditLogs.Add([PSCustomObject]@{
             Message = "Could not create or correlate GoodHabitz account. Error: $($_.Exception.Message)"

@@ -4,15 +4,9 @@
 ############################################
 
 try {
-    if ($actionContext.DryRun -eq $true) {
-        Write-Information "[DryRun] correlate GoodHabitz account for: [$($personContext.Person.DisplayName)], will be executed during enforcement"
-        $outputContext.AccountReference = $actionContext.Data.EmailAddress
-        $outputContext.success = $true
-    }
-
-    if (-not($actionContext.DryRun -eq $true)) {
+    if (-not([string]::IsNullOrEmpty($actionContext.Data.EmailAddress))) {
         Write-Information 'Correlating GoodHabitz account'
-
+        
         $outputContext.AccountReference = $actionContext.Data.EmailAddress
         $outputContext.success = $true
         $outputContext.AuditLogs.Add([PSCustomObject]@{
@@ -20,6 +14,9 @@ try {
                 Message = "Account [$($actionContext.Data.EmailAddress)] successfully correlated on field [EmailAddress]"
                 IsError = $false
             })
+    }
+    else {
+        throw "Mapping EmailAddress is empty this is likely a mapping error"
     }
 }
 catch {
