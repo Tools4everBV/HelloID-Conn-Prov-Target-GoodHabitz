@@ -30,13 +30,13 @@ _HelloID-Conn-Prov-Target-GoodHabitz_ is a _target_ connector. _GoodHabitz_ The 
 
 The following lifecycle actions are available:
 
-| Action             | Description                          |
-| ------------------ | ------------------------------------ |
-| create.ps1         | PowerShell _create_ lifecycle action |
-| update.ps1         | PowerShell _update_ lifecycle action |
-| delete.ps1         | PowerShell _delete_ lifecycle action |
-| configuration.json | Default _configuration.json_         |
-| fieldMapping.json  | Default _fieldMapping.json_          |
+| Action             | Description                                      |
+| ------------------ | ------------------------------------------------ |
+| create.ps1         | Script to fill the account reference             |
+| update.ps1         | Script to update the account reference if needed |
+| delete.ps1         | PowerShell _delete_ lifecycle action             |
+| configuration.json | Default _configuration.json_                     |
+| fieldMapping.json  | Default _fieldMapping.json_                      |
 
 The field mapping can be imported by using the _fieldMapping.json_ file.
 
